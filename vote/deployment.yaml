@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vote-app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vote-app
+  template:
+    metadata:
+      labels:
+        app: vote-app
+    spec:
+      containers:
+      - name: vote-app-pod
+        image: qeek-dev/vote-app
+        env:
+        - name: REDIS_PASSWORD
+          value: "redis_password"
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: vote-app-service
+  name: vote-app-service
+spec:
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: vote-app
+  type: NodePort
+status:
+  loadBalancer: {}

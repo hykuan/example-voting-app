@@ -1,0 +1,24 @@
+apiVersion: skaffold/v1alpha2
+kind: Config
+build:
+  artifacts:
+  - imageName: qeek-dev/vote-app
+    workspace: ./vote
+    docker:
+      dockerfilePath: Dockerfile
+  - imageName: qeek-dev/vote-result
+    workspace: ./result
+    docker:
+      dockerfilePath: Dockerfile
+  - imageName: qeek-dev/vote-worker
+    workspace: ./worker
+    docker:
+      dockerfilePath: Dockerfile
+deploy:
+  kubectl:
+    manifests:
+    - postgres/deployment.yaml
+    - redis/deployment.yaml
+    - result/deployment.yaml
+    - vote/deployment.yaml
+    - worker/deployment.yaml
