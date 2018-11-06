@@ -1,24 +1,33 @@
-apiVersion: skaffold/v1alpha2
+apiVersion: skaffold/v1alpha4
 kind: Config
 build:
   artifacts:
-  - imageName: qeek-dev/vote-app
-    workspace: ./vote
+  - image: qeek-dev/vote-app
+    context: ./vote
     docker:
-      dockerfilePath: Dockerfile
-  - imageName: qeek-dev/vote-result
-    workspace: ./result
+      dockerfile: Dockerfile
+  - image: qeek-dev/vote-result
+    context: ./result
     docker:
-      dockerfilePath: Dockerfile
-  - imageName: qeek-dev/vote-worker
-    workspace: ./worker
+      dockerfile: Dockerfile
+  - image: qeek-dev/vote-worker
+    context: ./worker
     docker:
-      dockerfilePath: Dockerfile
+      dockerfile: Dockerfile
 deploy:
-  kubectl:
-    manifests:
-    - postgres/deployment.yaml
-    - redis/deployment.yaml
-    - result/deployment.yaml
-    - vote/deployment.yaml
-    - worker/deployment.yaml
+  # kubectl:
+  #   manifests:
+  #   - postgres/deployment.yaml
+  #   - redis/deployment.yaml
+  #   - result/deployment.yaml
+  #   - vote/deployment.yaml
+  #   - worker/deployment.yaml
+  helm:
+    releases:
+    - name: voting-app
+      chartPath: vote-app
+      namespace: default
+      values:
+        appImage: qeek-dev/vote-app
+        resultImage: qeek-dev/vote-result
+        workerImage: qeek-dev/vote-worker
